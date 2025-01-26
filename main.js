@@ -138,10 +138,6 @@ class Cube {
         this.targetY = window.innerHeight * 0.25 / 40  + yOffset;
         this.falling = true;
         
-        // Add splash particles array to Cube class
-        this.splashParticles = [];
-        this.hasSplashed = false;
-        
         // Add initial and final scale
         this.initialScale = scale/3;
         this.finalScale = this.initialScale;
@@ -177,13 +173,7 @@ class Cube {
         this.bubbleSystem.add(bubble);
     }
 
-    createSplash() {
-        for(let i = 0; i < 20; i++) {
-            this.splashParticles.push(new SplashParticle(this.mesh.position));
-        }
-        this.hasSplashed = true;
-    }
-
+    
     //ANIMATION
     update() {
         if (this.falling) {
