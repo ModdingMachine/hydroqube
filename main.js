@@ -13,12 +13,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor(0x006994, 0);
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
-directionalLight.position.set(-15, 20, 10);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.6);
+directionalLight.position.set(-30, 40, 20);
 scene.add(directionalLight);
+
+// Adjust secondary light to complement main light
+const secondaryLight = new THREE.DirectionalLight(0xffffff, 0.6);
+secondaryLight.position.set(20, -10, -15);
+scene.add(secondaryLight);
 
 camera.position.z = 30;
 camera.position.y = 0;
@@ -89,15 +94,28 @@ class Cube {
         const material = new THREE.MeshPhongMaterial({
             color: 0x000000,
             transparent: true,
-            opacity: 0.4,
-            shininess: 50,
-            specular: 0x004a7c,
+            opacity: 0.7,
+            shininess: 1,         // Reduced shininess for less glare
+            specular: 0xffffff,    // Darker specular highlights
             refractionRatio: 0.98,
             reflectivity: 0.7,
-            flatShading: true
+            flatShading: false,    // Changed to smooth shading
         });
         
+        // Add subtle bevel to edges
+        const bevGeometry = new THREE.BoxGeometry(scale * 0.99, scale * 0.99, scale * 0.99);
+        const edges = new THREE.EdgesGeometry(bevGeometry);
+        const line = new THREE.LineSegments(
+            edges,
+            new THREE.LineBasicMaterial({ 
+                color: 0x000000, 
+                transparent: true, 
+                opacity: 0.2 
+            })
+        );
+        
         this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh.add(line); // Add edges to cube
         this.bubbles = [];
         this.bubbleSystem = new THREE.Group();
         scene.add(this.bubbleSystem);
@@ -265,11 +283,11 @@ class Cube {
 
 // Create cubes
 const cubes = [
-    new Cube('left', -0.1, 0, 3, 'middle'),
-    new Cube('left', -1.5, -1, 3, 'outer'),  // Keep this one for mobile
-    new Cube('left', -0.75, 5, 2.3, 'outer'), // Keep this one for mobile
-    new Cube('right', 0, -1, 2.5, 'middle'),
-    new Cube('right', 1.4, 3, 3, 'outer')
+    new Cube('left', -0.1, 0, 3, 'outer'),
+    new Cube('left', -1.5, -1, 3, 'outer'),
+    new Cube('left', -0.75, 5, 2.3, 'outer'),
+    new Cube('right', 0, -1, 3.2, 'middle'),  // This will be the only visible cube on mobile
+    new Cube('right', 1.4, 3, 2.5, 'outer')
 ];
 
 // Animation loop
@@ -380,16 +398,27 @@ function handleResize() {
     
     cubes.forEach(cube => {
         if (isMobile) {
-            // Only show middle cubes on mobile
+            // Only show the one middle cube on mobile
             cube.mesh.visible = cube.position === 'middle';
             if (cube.bubbleSystem) {
                 cube.bubbleSystem.visible = cube.position === 'middle';
             }
+            
+            // Adjust position of visible cube on mobile
+            if (cube.position === 'middle') {
+                cube.mesh.position.x = 10;  // Move closer to center
+                cube.mesh.position.z = 0.5;  // Slight offset
+            }
         } else {
-            // Show all cubes on desktop
+            // Reset position and show all cubes on desktop
             cube.mesh.visible = true;
             if (cube.bubbleSystem) {
                 cube.bubbleSystem.visible = true;
+            }
+            // Reset position if it was moved for mobile
+            if (cube.position === 'middle') {
+                cube.mesh.position.x = 30;  // Original position
+                cube.mesh.position.z = 0;   // Original z position
             }
         }
     });

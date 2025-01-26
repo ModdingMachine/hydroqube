@@ -9,6 +9,7 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     background: linear-gradient(120deg, #add7e7 0%, #006994 100%);
+    background-attachment: fixed;
     min-height: 100vh;
 }
 
@@ -247,22 +248,22 @@ h2 {
     }
     
     section > .content {
-        max-width: 90%;
+        max-width: 60%;
         padding: 1.5rem;
-        text-align: center;
+        text-align: left;
+        margin: 0 0 0 1rem;
+        background: rgba(255, 255, 255, 0.85);
     }
     
-    /* Adjust camera view for mobile */
     #bg-canvas {
-        transform: scale(0.8);
+        transform: none;
     }
     
-    /* Adjust section spacing */
     section {
         padding: 4rem 1rem 2rem;
+        justify-content: flex-start;
     }
     
-    /* Make text smaller on mobile */
     h1 {
         font-size: 2rem;
         margin-bottom: 0.75rem;
@@ -281,7 +282,6 @@ h2 {
         font-size: 0.9rem;
     }
     
-    /* Center and adjust nav */
     nav {
         padding: 0.75rem;
         text-align: center;
@@ -295,10 +295,9 @@ h2 {
         font-size: 1.2rem;
     }
     
-    /* Adjust slideshow for mobile */
     .slide {
         flex-direction: column;
-        text-align: center;
+        text-align: left;
         gap: 1rem;
     }
     
@@ -310,15 +309,73 @@ h2 {
         height: 200px;
     }
     
-    /* Adjust form elements */
     #contact-form {
+        margin: 0;
         padding: 0.75rem;
+        width: 100%;
+        max-width: none;
     }
     
     #contact-form input,
     #contact-form button {
         padding: 0.75rem;
         font-size: 0.9rem;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+        position: relative;
+        padding-right: 1rem;
+    }
+    
+    .about-text {
+        width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        padding-right: 60px;
+    }
+    
+    .cube-display {
+        position: absolute;
+        right: -180px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 200px;
+        height: 200px;
+        z-index: 4;
+    }
+    
+    .cube-image {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .cube-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 20px;
+    }
+    
+    #about .content {
+        padding-right: 2rem;
+        overflow: visible;
+        position: relative;
+    }
+    
+    .feature, 
+    .about-grid,
+    .slide,
+    #contact-form {
+        margin-left: 0;
+        margin-right: auto;
+    }
+    
+    .content {
+        overflow: hidden;
+        width: 100%;
     }
 }
 
@@ -328,25 +385,23 @@ section:not(:first-child) {
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px; /* Adjust this value to match your nav height */
+    scroll-padding-top: 80px;
 }
 
-/* Update existing styles */
 #contact {
     position: relative;
     overflow: hidden;
 }
 
-/* Add slideshow styles */
 .slideshow-container {
     position: relative;
     width: 100%;
-    padding: 20px 40px;  /* Add padding to make room for arrows */
+    padding: 20px 20px;
     margin: 0 auto;
 }
 
 .slides-wrapper {
-    overflow: hidden;  /* Move overflow hidden to a wrapper */
+    overflow: hidden;
     width: 100%;
 }
 
@@ -358,17 +413,17 @@ html {
 
 .slide {
     min-width: 100%;
-    width: 100%;  /* Added explicit width */
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 2rem;
-    padding: 0 1rem;
+    gap: 1rem;
+    padding: 0 0.5rem;
     flex-shrink: 0;
 }
 
 .slide-text {
     flex: 1;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .slide-text h3 {
@@ -396,14 +451,14 @@ html {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.4);
     border: none;
     width: 40px;
     height: 40px;
     cursor: pointer;
     font-size: 1.8rem;
     color: #333;
-    opacity: 0.6;
+    opacity: 0.4;
     transition: all 0.3s ease;
     padding: 0;
     border-radius: 50%;
@@ -415,18 +470,18 @@ html {
 }
 
 .slide-arrow:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-50%) scale(1.1);  /* Slight grow effect */
+    background: rgba(255, 255, 255, 0.6);
+    opacity: 0.8;
+    transform: translateY(-50%) scale(1.1);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .prev {
-    left: 0;
+    left: -30px;
 }
 
 .next {
-    right: 0;
+    right: -30px;
 }
 
 .slide-dots {
@@ -488,10 +543,9 @@ html {
 .submit-button:disabled {
     background: #cccccc;
     cursor: not-allowed;
-    color: rgba(0, 0, 0, 0.6) !important;  /* Changed to dark semi-transparent */
+    color: rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Update form input to match button width */
 #contact-form input[type="email"] {
     width: 100%;
     padding: 10px;
@@ -499,4 +553,14 @@ html {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .prev {
+        left: -20px;
+    }
+    
+    .next {
+        right: -20px;
+    }
 } 
