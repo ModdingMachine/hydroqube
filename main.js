@@ -84,7 +84,7 @@ class SplashParticle {
 
 
 class Cube {
-    constructor(side, index, yOffset, scale) {
+    constructor(side, index, yOffset, scale, position = 'outer') {
         const geometry = new THREE.BoxGeometry(scale, scale, scale);
         const material = new THREE.MeshPhongMaterial({
             color: 0x000000,
@@ -114,9 +114,9 @@ class Cube {
         
         // Simple rotation - store original speeds
         this.rotationSpeed = new THREE.Vector3(
-            (Math.random()*5 - 2.5) * 0.005,
-            (Math.random()*5 - 2.5) * 0.005,
-            (Math.random()*5 - 2.5) * 0.005
+            (Math.random()*2 - 1) * 0.01,
+            (Math.random()*2 - 1) * 0.01,
+            (Math.random()*2 - 1) * 0.01
         );
         
         // Store initial speeds for reference
@@ -136,12 +136,15 @@ class Cube {
         // Movement
         this.velocity = new THREE.Vector3(0, -0.5, 0);
         this.targetY = window.innerHeight * 0.25 / 40  + yOffset;
+        this.finalY = 15 + 2*yOffset;
         this.falling = true;
         
         // Add initial and final scale
         this.initialScale = scale/3;
         this.finalScale = this.initialScale;
         this.mesh.scale.set(this.initialScale, this.initialScale, this.initialScale);
+        
+        this.position = position; // Add position property
         
         scene.add(this.mesh);
     }
@@ -173,7 +176,7 @@ class Cube {
         this.bubbleSystem.add(bubble);
     }
 
-    
+
     //ANIMATION
     update() {
         if (this.falling) {
@@ -210,7 +213,7 @@ class Cube {
             
             // Calculate scroll ratio and target position
             const scrollRatio = currentScrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            const bottomOfScreen = -(window.innerHeight * 1.2) / 40;
+            const bottomOfScreen = this.targetY - this.finalY;
             const targetY = THREE.MathUtils.lerp(this.targetY, bottomOfScreen, scrollRatio);
             
             // Scale down based on scroll ratio
@@ -262,11 +265,11 @@ class Cube {
 
 // Create cubes
 const cubes = [
-    new Cube('left', -0.1, 0, 3),
-    new Cube('left', -1.5, -1, 3),
-    new Cube('left', -0.75, 5, 2.3),
-    new Cube('right', 0, -1, 2.5),
-    new Cube('right', 1.4, 3, 3)
+    new Cube('left', -0.1, 0, 3, 'middle'),
+    new Cube('left', -1.5, -1, 3, 'outer'),  // Keep this one for mobile
+    new Cube('left', -0.75, 5, 2.3, 'outer'), // Keep this one for mobile
+    new Cube('right', 0, -1, 2.5, 'middle'),
+    new Cube('right', 1.4, 3, 3, 'outer')
 ];
 
 // Animation loop
@@ -281,6 +284,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    handleResize();
 });
 
 animate();
@@ -368,4 +372,28 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     
     // FormSubmit will handle the rest
     // Button will be re-enabled after navigation
-}); 
+});
+
+// Add mobile check and cube visibility handling
+function handleResize() {
+    const isMobile = window.innerWidth <= 768;
+    
+    cubes.forEach(cube => {
+        if (isMobile) {
+            // Only show middle cubes on mobile
+            cube.mesh.visible = cube.position === 'middle';
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = cube.position === 'middle';
+            }
+        } else {
+            // Show all cubes on desktop
+            cube.mesh.visible = true;
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = true;
+            }
+        }
+    });
+}
+
+// Initial call to handle resize
+handleResize(); 
