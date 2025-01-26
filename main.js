@@ -144,7 +144,7 @@ class Cube {
         
         // Add initial and final scale
         this.initialScale = scale/3;
-        this.finalScale = 1.5/3;
+        this.finalScale = this.initialScale;
         this.mesh.scale.set(this.initialScale, this.initialScale, this.initialScale);
         
         scene.add(this.mesh);
