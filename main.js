@@ -220,7 +220,8 @@ class Cube {
             
             // Calculate scroll ratio and target position
             const scrollRatio = currentScrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            const targetY = THREE.MathUtils.lerp(this.targetY, -(window.innerHeight * 0.75) / 40, scrollRatio);
+            const bottomOfScreen = -(window.innerHeight * 1.2) / 40;
+            const targetY = THREE.MathUtils.lerp(this.targetY, bottomOfScreen, scrollRatio);
             
             // Scale down based on scroll ratio
             const targetScale = THREE.MathUtils.lerp(this.initialScale, this.finalScale, scrollRatio);
@@ -251,23 +252,7 @@ class Cube {
                 this.createBubble();
             }
 
-            // Check for end of scroll and create splash
-            if (scrollRatio > 0.95 && !this.hasSplashed) {
-                this.createSplash();
-            }
-            // if the user scrolls back up re-prepare the splash
-            if (scrollRatio < 0.95 && this.hasSplashed) {
-                this.hasSplashed = false;
-            }
-            
-            // Update splash particles
-            for (let i = this.splashParticles.length - 1; i >= 0; i--) {
-                const particle = this.splashParticles[i];
-                if (!particle.update()) {
-                    particle.remove();
-                    this.splashParticles.splice(i, 1);
-                }
-            }
+            //Remove splash particles
         }
         
         // Update bubbles
