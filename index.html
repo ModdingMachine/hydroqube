@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydroQube - Smart Hydration Tracking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    
+    <nav>
+        <div class="logo">HydroQube</div>
+        <ul>
+            <li><a href="#intro">Intro</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="intro">
+        <div class="content">
+            <h1>Track Your Hydration Journey</h1>
+            <p>Meet the smart cube that transforms your water bottle into a hydration companion</p>            
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="content">
+            <h2>About HydroQube</h2>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>HydroQube is revolutionizing hydration tracking with our smart cube technology. Simply drop the cube in your water bottle and let it do the rest. Our advanced sensors measure your water intake while the cute virtual pet motivates you to stay hydrated.</p>
+                </div>
+                <div class="cube-display">
+                    <div class="cube-image">
+                        <img src="waterBottles/cube.webp" alt="HydroQube">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="content">
+            <h2>Smart Features</h2>
+            <div class="slideshow-container">
+                <div class="slides-wrapper">
+                    <div class="slides">
+                        <div class="slide">
+                            <div class="slide-text">
+                                <h3>Bluetooth Connectivity</h3>
+                                <p>Seamlessly syncs with your smartphone, providing real-time hydration tracking and personalized notifications to keep you on track with your daily water intake goals.</p>
+                            </div>
+                            <div class="slide-image">
+                                <img src="images/bluetooth-feature.jpg" alt="Bluetooth connectivity">
+                            </div>
+                        </div>
+                        
+                        <div class="slide">
+                            <div class="slide-image">
+                                <img src="images/pet-widget.jpg" alt="Digital pet widget">
+                            </div>
+                            <div class="slide-text">
+                                <h3>Digital Pet Widget</h3>
+                                <p>Care for your virtual pet by maintaining healthy hydration habits. Watch it grow and thrive as you achieve your daily water intake goals.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="slide">
+                            <div class="slide-text">
+                                <h3>LED Display</h3>
+                                <p>Quick view of daily water intake with our intuitive LED display. Visual feedback helps you stay on track throughout the day.</p>
+                            </div>
+                            <div class="slide-image">
+                                <img src="images/led-display.jpg" alt="LED display">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="slide-arrow prev">&#10094;</button>
+                <button class="slide-arrow next">&#10095;</button>
+                
+                <div class="slide-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="bottle-containers">
+            <div class="left-bottles">
+                <div class="bottle-template">
+                    <img src="waterBottles/bottle1.png" alt="Bottle Template">
+                </div>
+                <div class="bottle-template">
+                    <img src="waterBottles/bottle2.png" alt="Bottle Template">
+                </div>
+                <div class="bottle-template">
+                    <img src="waterBottles/bottle3.png" alt="Bottle Template">
+                </div>
+            </div>
+            <div class="right-bottles">
+                <div class="bottle-template">
+                    <img src="waterBottles/bottle4.png" alt="Bottle Template">
+                </div>
+                <div class="bottle-template">
+                    <img src="waterBottles/bottle5.png" alt="Bottle Template">
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <h2>Interested?</h2>
+            <form id="contact-form" action="https://formsubmit.co/coder930@gmail.com" method="POST">
+                <input type="email" name="email" placeholder="Email" required>
+                <button type="submit" class="submit-button">Join the Waitlist</button>
+                <div class="form-message"></div>
+                
+                <!-- FormSubmit customization -->
+                <input type="hidden" name="_subject" value="New HydroQube Waitlist Signup!">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_autoresponse" value="Thanks for joining the HydroQube waitlist! We'll keep you updated on our progress.">
+            </form>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function() {
+            // Initialize EmailJS with your public key
+            emailjs.init("wiGDg8zD4usBU3s3U");
+        })();
+    </script>
+</body>
+</html> 
