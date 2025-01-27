@@ -299,9 +299,12 @@ function animate() {
 
 // Handle window resize
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    // Only update camera and renderer if not on mobile
+    if (window.innerWidth > 768) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
     handleResize();
 });
 
@@ -398,16 +401,25 @@ function handleResize() {
     
     cubes.forEach(cube => {
         if (isMobile) {
-            // Only show the one middle cube on mobile
             cube.mesh.visible = cube.position === 'middle';
             if (cube.bubbleSystem) {
                 cube.bubbleSystem.visible = cube.position === 'middle';
             }
             
-            // Adjust position of visible cube on mobile
             if (cube.position === 'middle') {
-                cube.mesh.position.x = 10;  // Move closer to center
-                cube.mesh.position.z = 0.5;  // Slight offset
+                // Position cube in the right space
+                const contentWidth = window.innerWidth * 0.7;
+                const margin = window.innerWidth * 0.45;
+                const rightSpace = window.innerWidth - contentWidth - margin;
+                
+                // Convert to Three.js units
+                cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
+                cube.mesh.position.z = 0.5;
+                
+                // Double the rotation speed for mobile
+                cube.rotationSpeed.multiplyScalar(2);
+                cube.initialRotationSpeed.multiplyScalar(2);
+                cube.currentRotationSpeed.multiplyScalar(2);
             }
         } else {
             // Reset position and show all cubes on desktop
@@ -415,10 +427,14 @@ function handleResize() {
             if (cube.bubbleSystem) {
                 cube.bubbleSystem.visible = true;
             }
-            // Reset position if it was moved for mobile
+            // Reset position and rotation if it was moved for mobile
             if (cube.position === 'middle') {
-                cube.mesh.position.x = 30;  // Original position
-                cube.mesh.position.z = 0;   // Original z position
+                cube.mesh.position.x = 30;
+                cube.mesh.position.z = 0;
+                // Reset rotation speeds to original values
+                cube.rotationSpeed.divideScalar(2);
+                cube.initialRotationSpeed.divideScalar(2);
+                cube.currentRotationSpeed.divideScalar(2);
             }
         }
     });
