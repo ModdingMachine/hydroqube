@@ -588,6 +588,9 @@ html {
         z-index: 1;
         pointer-events: none;
         transform: none !important;
+        -webkit-transform: translateZ(0);  /* Force GPU acceleration */
+        backface-visibility: hidden;
+        perspective: 1000;
     }
     
     /* Remove the problematic fixed positioning */
@@ -595,18 +598,25 @@ html {
         width: 100%;
         height: 100%;
         -webkit-overflow-scrolling: touch;
-        overflow-x: hidden;  /* Only prevent horizontal scroll */
+        overflow-x: hidden;
     }
     
     /* Ensure content is scrollable */
     body {
         position: relative;
         min-height: 100%;
+        -webkit-transform: translateZ(0);  /* Force GPU acceleration */
     }
     
     /* Fix nav positioning for iOS */
     nav {
         position: fixed;
-        -webkit-transform: translateZ(0);  /* Force hardware acceleration */
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Force hardware acceleration for all transforms */
+    * {
+        -webkit-transform-style: preserve-3d;
+        -webkit-backface-visibility: hidden;
     }
 } 
