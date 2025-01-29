@@ -9,13 +9,10 @@ try {
     renderer = new THREE.WebGLRenderer({ 
         canvas, 
         alpha: true, 
-        antialias: false, 
+        antialias: false,
         powerPreference: "high-performance",
         failIfMajorPerformanceCaveat: false
     });
-    
-    // Force context preservation
-    renderer.context.getExtension('WEBGL_lose_context');
 } catch (error) {
     console.error('WebGL error:', error);
 }
@@ -24,70 +21,33 @@ try {
 const pixelRatio = Math.min(window.devicePixelRatio, 2);
 renderer.setPixelRatio(pixelRatio);
 
-// Move handleResize definition up before it's used
-function handleResize() {
-    if (!cubes) return; // Guard clause in case cubes aren't initialized yet
-    
-    const isMobile = window.innerWidth <= 768;
-    cubes.forEach(cube => {
-        if (isMobile) {
-            cube.mesh.visible = cube.position === 'middle';
-            if (cube.bubbleSystem) {
-                cube.bubbleSystem.visible = cube.position === 'middle';
-            }
-            
-            if (cube.position === 'middle') {
-                // Simpler positioning for mobile
-                const screenWidth = window.innerWidth;
-                const rightOffset = screenWidth * 0.8; // Position at 80% of screen width
-                
-                // Convert to Three.js units (divide by a smaller number for larger position value)
-                cube.mesh.position.x = rightOffset / 15;
-                cube.mesh.position.z = 0.5;
-                
-                // Double rotation speed for mobile
-                cube.rotationSpeed.multiplyScalar(2);
-                cube.initialRotationSpeed.multiplyScalar(2);
-                cube.currentRotationSpeed.multiplyScalar(2);
-            }
-        } else {
-            // Desktop positioning (unchanged)
-            cube.mesh.visible = true;
-            if (cube.bubbleSystem) {
-                cube.bubbleSystem.visible = true;
-            }
-            if (cube.position === 'middle') {
-                cube.mesh.position.x = 30;
-                cube.mesh.position.z = 0;
-                cube.rotationSpeed.divideScalar(2);
-                cube.initialRotationSpeed.divideScalar(2);
-                cube.currentRotationSpeed.divideScalar(2);
-            }
-        }
-    });
+// Ensure proper sizing on iOS
+function resizeRendererToDisplaySize() {
+    const width = canvas.clientWidth * pixelRatio | 0;
+    const height = canvas.clientHeight * pixelRatio | 0;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+        renderer.setSize(width, height, false);
+    }
+    return needResize;
 }
 
+// Initialize renderer
 function initRenderer() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x006994, 0);
-    
-    // Force a resize check
     resizeRendererToDisplaySize();
-    if (cubes) handleResize(); // Only call if cubes exist
 }
 
 // Add context lost/restore handlers
 canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
-    console.log('Context lost');
 }, false);
 
 canvas.addEventListener('webglcontextrestored', () => {
-    console.log('Context restored');
     initRenderer();
 }, false);
 
-// Initialize renderer first
 initRenderer();
 
 // Lighting
@@ -367,8 +327,50 @@ class Cube {
     }
 }
 
-// Create cubes (moved after Cube class definition)
-const cubes = [
+// At the top of the file, after renderer setup
+let cubes;
+
+function handleResize() {
+    if (!cubes) return;
+    const isMobile = window.innerWidth <= 768;
+    
+    cubes.forEach(cube => {
+        if (isMobile) {
+            cube.mesh.visible = cube.position === 'middle';
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = cube.position === 'middle';
+            }
+            
+            if (cube.position === 'middle') {
+                // Simpler positioning for mobile
+                const screenWidth = window.innerWidth;
+                const rightOffset = screenWidth; 
+                cube.mesh.position.x = rightOffset / 40 + 1.5; // Increased divisor from 15
+                cube.mesh.position.z = 0.5;
+                
+                // Reset rotation speeds first to prevent compounding
+                cube.rotationSpeed.copy(cube.baseRotationSpeed);
+                cube.initialRotationSpeed.copy(cube.rotationSpeed).multiplyScalar(4);
+                cube.currentRotationSpeed.copy(cube.initialRotationSpeed);
+            }
+        } else {
+            cube.mesh.visible = true;
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = true;
+            }
+            if (cube.position === 'middle') {
+                cube.mesh.position.x = 30;
+                cube.mesh.position.z = 0;
+                cube.rotationSpeed.divideScalar(2);
+                cube.initialRotationSpeed.divideScalar(2);
+                cube.currentRotationSpeed.divideScalar(2);
+            }
+        }
+    });
+}
+
+// After Cube class definition
+cubes = [
     new Cube('left', -0.1, 0, 3, 'outer'),
     new Cube('left', -1.5, -1, 3, 'outer'),
     new Cube('left', -0.75, 5, 2.3, 'outer'),
@@ -376,7 +378,6 @@ const cubes = [
     new Cube('right', 1.4, 3, 2.5, 'outer')
 ];
 
-// Now call handleResize after cubes are created
 handleResize();
 
 // Animation loop
@@ -495,60 +496,4 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     
     // FormSubmit will handle the rest
     // Button will be re-enabled after navigation
-});
-
-// Add mobile check and cube visibility handling
-function handleResize() {
-    const isMobile = window.innerWidth <= 768;
-    
-    cubes.forEach(cube => {
-        if (isMobile) {
-            cube.mesh.visible = cube.position === 'middle';
-            if (cube.bubbleSystem) {
-                cube.bubbleSystem.visible = cube.position === 'middle';
-            }
-            
-            if (cube.position === 'middle') {
-                // Simpler positioning for mobile
-                const screenWidth = window.innerWidth;
-                const rightOffset = screenWidth * 0.8; // Position at 80% of screen width
-                
-                // Convert to Three.js units (divide by a smaller number for larger position value)
-                cube.mesh.position.x = rightOffset / 15;
-                cube.mesh.position.z = 0.5;
-                
-                // Double rotation speed for mobile
-                cube.rotationSpeed.multiplyScalar(2);
-                cube.initialRotationSpeed.multiplyScalar(2);
-                cube.currentRotationSpeed.multiplyScalar(2);
-            }
-        } else {
-            // Desktop positioning (unchanged)
-            cube.mesh.visible = true;
-            if (cube.bubbleSystem) {
-                cube.bubbleSystem.visible = true;
-            }
-            if (cube.position === 'middle') {
-                cube.mesh.position.x = 30;
-                cube.mesh.position.z = 0;
-                cube.rotationSpeed.divideScalar(2);
-                cube.initialRotationSpeed.divideScalar(2);
-                cube.currentRotationSpeed.divideScalar(2);
-            }
-        }
-    });
-}
-
-// Initial call to handle resize
-handleResize();
-
-// Ensure proper sizing on iOS
-function resizeRendererToDisplaySize() {
-    const width = canvas.clientWidth * pixelRatio | 0;
-    const height = canvas.clientHeight * pixelRatio | 0;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) {
-        renderer.setSize(width, height, false);
-    }
-    return needResize;
-} 
+}); 
