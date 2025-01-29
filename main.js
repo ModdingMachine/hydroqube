@@ -330,7 +330,6 @@ class Cube {
     }
 }
 
-// At the top of the file, after renderer setup
 let cubes;
 
 function handleResize() {
