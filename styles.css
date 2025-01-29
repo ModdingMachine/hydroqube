@@ -583,19 +583,30 @@ html {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100dvh !important; /* Use dynamic viewport height */
+        width: 100% !important;
+        height: 100% !important;
         z-index: 1;
         pointer-events: none;
-        background: rgba(0, 0, 0, 0.1);
-        transform: none !important; /* Prevent transforms */
+        transform: none !important;
     }
     
-    /* Prevent body scrolling bounce */
+    /* Remove the problematic fixed positioning */
     html, body {
-        position: fixed;
         width: 100%;
         height: 100%;
-        overflow: auto;
         -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;  /* Only prevent horizontal scroll */
+    }
+    
+    /* Ensure content is scrollable */
+    body {
+        position: relative;
+        min-height: 100%;
+    }
+    
+    /* Fix nav positioning for iOS */
+    nav {
+        position: fixed;
+        -webkit-transform: translateZ(0);  /* Force hardware acceleration */
     }
 } 
