@@ -16,14 +16,22 @@ renderer.setClearColor(0x006994, 0);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.6);
+// Left light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
 directionalLight.position.set(-30, 40, 20);
 scene.add(directionalLight);
 
-// Adjust secondary light to complement main light
-const secondaryLight = new THREE.DirectionalLight(0xffffff, 0.6);
-secondaryLight.position.set(20, -10, -15);
+// Right mirrored light
+const mirroredLight = new THREE.DirectionalLight(0xffffff, 0.4);
+mirroredLight.position.set(30, 40, 20);
+scene.add(mirroredLight);
+
+// Adjust secondary fill light
+const secondaryLight = new THREE.DirectionalLight(0xffffff, 0.4);
+secondaryLight.position.set(0, -10, 25);
 scene.add(secondaryLight);
+
+
 
 camera.position.z = 30;
 camera.position.y = 0;
@@ -140,7 +148,7 @@ class Cube {
         // Store initial speeds for reference
         this.initialRotationSpeed = this.rotationSpeed.clone().multiplyScalar(2);
         // Create slower base speed for when not scrolling
-        this.baseRotationSpeed = this.rotationSpeed.clone().multiplyScalar(0.2);
+        this.baseRotationSpeed = this.rotationSpeed.clone().multiplyScalar(0.15);
         
         // Set current rotation speed to initial speed for falling animation
         this.currentRotationSpeed = this.initialRotationSpeed.clone();
@@ -154,7 +162,14 @@ class Cube {
         // Movement
         this.velocity = new THREE.Vector3(0, -0.5, 0);
         this.targetY = window.innerHeight * 0.25 / 40  + yOffset;
-        this.finalY = 15 + 2*yOffset;
+        this.startY = this.targetY;
+        this.finalY = window.innerHeight * 0.85 / 40 + 2*yOffset;
+        // Set the target Y to where the animation will pick up to ease in:
+        // Calculate scroll ratio and target position
+        const scrollRatio = window.pageYOffset / (document.documentElement.scrollHeight - window.innerHeight);
+        this.bottomOfScreen = this.targetY - this.finalY;
+        this.targetY = THREE.MathUtils.lerp(this.targetY, this.bottomOfScreen, scrollRatio);
+
         this.falling = true;
         
         // Add initial and final scale
@@ -231,8 +246,7 @@ class Cube {
             
             // Calculate scroll ratio and target position
             const scrollRatio = currentScrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            const bottomOfScreen = this.targetY - this.finalY;
-            const targetY = THREE.MathUtils.lerp(this.targetY, bottomOfScreen, scrollRatio);
+            const targetY = THREE.MathUtils.lerp(this.startY, this.bottomOfScreen, scrollRatio);
             
             // Scale down based on scroll ratio
             const targetScale = THREE.MathUtils.lerp(this.initialScale, this.finalScale, scrollRatio);

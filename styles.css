@@ -8,7 +8,12 @@ body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
-    background: linear-gradient(120deg, #add7e7 0%, #006994 100%);
+    background: linear-gradient(90deg, 
+        #75bcd8 0%, 
+        #006994 30%, 
+        #006994 70%, 
+        #75bcd8 100%
+    );
     background-attachment: fixed;
     min-height: 100vh;
 }
@@ -376,6 +381,13 @@ h2 {
     .content {
         overflow: hidden;
         width: 100%;
+    }
+    
+    body {
+        background: linear-gradient(90deg, 
+            #006994 0%,
+            #75bcd8 100%
+        );
     }
 }
 
