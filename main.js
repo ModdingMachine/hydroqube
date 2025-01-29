@@ -1,5 +1,7 @@
 // Three.js setup
 const canvas = document.querySelector('#bg-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 // Add error handling for WebGL context
 let renderer;
@@ -7,7 +9,7 @@ try {
     renderer = new THREE.WebGLRenderer({ 
         canvas, 
         alpha: true, 
-        antialias: false,  // Disable antialiasing for better mobile performance
+        antialias: false, 
         powerPreference: "high-performance",
         failIfMajorPerformanceCaveat: false
     });
@@ -22,6 +24,58 @@ try {
 const pixelRatio = Math.min(window.devicePixelRatio, 2);
 renderer.setPixelRatio(pixelRatio);
 
+// Move handleResize definition up before it's used
+function handleResize() {
+    if (!cubes) return; // Guard clause in case cubes aren't initialized yet
+    
+    const isMobile = window.innerWidth <= 768;
+    cubes.forEach(cube => {
+        if (isMobile) {
+            cube.mesh.visible = cube.position === 'middle';
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = cube.position === 'middle';
+            }
+            
+            if (cube.position === 'middle') {
+                // Simpler positioning for mobile
+                const screenWidth = window.innerWidth;
+                const rightOffset = screenWidth * 0.8; // Position at 80% of screen width
+                
+                // Convert to Three.js units (divide by a smaller number for larger position value)
+                cube.mesh.position.x = rightOffset / 15;
+                cube.mesh.position.z = 0.5;
+                
+                // Double rotation speed for mobile
+                cube.rotationSpeed.multiplyScalar(2);
+                cube.initialRotationSpeed.multiplyScalar(2);
+                cube.currentRotationSpeed.multiplyScalar(2);
+            }
+        } else {
+            // Desktop positioning (unchanged)
+            cube.mesh.visible = true;
+            if (cube.bubbleSystem) {
+                cube.bubbleSystem.visible = true;
+            }
+            if (cube.position === 'middle') {
+                cube.mesh.position.x = 30;
+                cube.mesh.position.z = 0;
+                cube.rotationSpeed.divideScalar(2);
+                cube.initialRotationSpeed.divideScalar(2);
+                cube.currentRotationSpeed.divideScalar(2);
+            }
+        }
+    });
+}
+
+function initRenderer() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x006994, 0);
+    
+    // Force a resize check
+    resizeRendererToDisplaySize();
+    if (cubes) handleResize(); // Only call if cubes exist
+}
+
 // Add context lost/restore handlers
 canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
@@ -30,22 +84,11 @@ canvas.addEventListener('webglcontextlost', (event) => {
 
 canvas.addEventListener('webglcontextrestored', () => {
     console.log('Context restored');
-    initRenderer();  // Re-initialize everything
+    initRenderer();
 }, false);
 
-function initRenderer() {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x006994, 0);
-    
-    // Force a resize check
-    resizeRendererToDisplaySize();
-    handleResize();
-}
-
+// Initialize renderer first
 initRenderer();
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -324,14 +367,17 @@ class Cube {
     }
 }
 
-// Create cubes
+// Create cubes (moved after Cube class definition)
 const cubes = [
     new Cube('left', -0.1, 0, 3, 'outer'),
     new Cube('left', -1.5, -1, 3, 'outer'),
     new Cube('left', -0.75, 5, 2.3, 'outer'),
-    new Cube('right', 0, -1, 3.2, 'middle'),  // This will be the only visible cube on mobile
+    new Cube('right', 0, -1, 3.2, 'middle'),
     new Cube('right', 1.4, 3, 2.5, 'outer')
 ];
+
+// Now call handleResize after cubes are created
+handleResize();
 
 // Animation loop
 function animate() {
@@ -463,26 +509,28 @@ function handleResize() {
             }
             
             if (cube.position === 'middle') {
-                // Position cube in the right space
-                const contentWidth = window.innerWidth * 0.7;
-                const margin = window.innerWidth * 0.45;
-                const rightSpace = window.innerWidth - contentWidth - margin;
+                // Simpler positioning for mobile
+                const screenWidth = window.innerWidth;
+                const rightOffset = screenWidth * 0.8; // Position at 80% of screen width
                 
-                // Convert to Three.js units
-                cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
+                // Convert to Three.js units (divide by a smaller number for larger position value)
+                cube.mesh.position.x = rightOffset / 15;
                 cube.mesh.position.z = 0.5;
+                
+                // Double rotation speed for mobile
+                cube.rotationSpeed.multiplyScalar(2);
+                cube.initialRotationSpeed.multiplyScalar(2);
+                cube.currentRotationSpeed.multiplyScalar(2);
             }
         } else {
-            // Reset position and show all cubes on desktop
+            // Desktop positioning (unchanged)
             cube.mesh.visible = true;
             if (cube.bubbleSystem) {
                 cube.bubbleSystem.visible = true;
             }
-            // Reset position and rotation if it was moved for mobile
             if (cube.position === 'middle') {
                 cube.mesh.position.x = 30;
                 cube.mesh.position.z = 0;
-                // Reset rotation speeds to original values
                 cube.rotationSpeed.divideScalar(2);
                 cube.initialRotationSpeed.divideScalar(2);
                 cube.currentRotationSpeed.divideScalar(2);
