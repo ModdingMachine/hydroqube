@@ -360,7 +360,7 @@ window.addEventListener('resize', () => {
 
 animate();
 
-// Enhanced smooth scroll for navigation links
+// Update smooth scroll for navigation links
 document.querySelectorAll('nav a').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -368,10 +368,16 @@ document.querySelectorAll('nav a').forEach(anchor => {
         const targetSection = document.querySelector(targetId);
         const navHeight = document.querySelector('nav').offsetHeight;
         
-        window.scrollTo({
-            top: targetSection.offsetTop - navHeight,
-            behavior: 'smooth'
-        });
+        // Use requestAnimationFrame for smoother scrolling
+        const scrollToSection = () => {
+            window.scrollTo({
+                top: targetSection.offsetTop - navHeight,
+                behavior: 'smooth'
+            });
+        };
+        
+        // Delay scroll slightly to ensure everything is calculated correctly
+        requestAnimationFrame(scrollToSection);
     });
 });
 
@@ -456,16 +462,16 @@ function handleResize() {
                 cube.bubbleSystem.visible = cube.position === 'middle';
             }
             
-            //if (cube.position === 'middle') {
-            //    // Position cube in the right space
-            //    const contentWidth = window.innerWidth * 0.7;
-            //    const margin = window.innerWidth * 0.45;
-            //    const rightSpace = window.innerWidth - contentWidth - margin;
+            if (cube.position === 'middle') {
+                // Position cube in the right space
+                const contentWidth = window.innerWidth * 0.7;
+                const margin = window.innerWidth * 0.45;
+                const rightSpace = window.innerWidth - contentWidth - margin;
                 
-            //    // Convert to Three.js units
-            //    cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
-            //    cube.mesh.position.z = 0.5;
-            //}
+                // Convert to Three.js units
+                cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
+                cube.mesh.position.z = 0.5;
+            }
         } else {
             // Reset position and show all cubes on desktop
             cube.mesh.visible = true;
@@ -473,14 +479,14 @@ function handleResize() {
                 cube.bubbleSystem.visible = true;
             }
             // Reset position and rotation if it was moved for mobile
-            //if (cube.position === 'middle') {
-            //    cube.mesh.position.x = 30;
-            //    cube.mesh.position.z = 0;
-            //    // Reset rotation speeds to original values
-            //    cube.rotationSpeed.divideScalar(2);
-            //    cube.initialRotationSpeed.divideScalar(2);
-            //    cube.currentRotationSpeed.divideScalar(2);
-            //}
+            if (cube.position === 'middle') {
+                cube.mesh.position.x = 30;
+                cube.mesh.position.z = 0;
+                // Reset rotation speeds to original values
+                cube.rotationSpeed.divideScalar(2);
+                cube.initialRotationSpeed.divideScalar(2);
+                cube.currentRotationSpeed.divideScalar(2);
+            }
         }
     });
 }

@@ -32,6 +32,7 @@ body {
 nav {
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
     padding: 1.5rem;
     background: rgba(255, 255, 255, 0.95);
@@ -39,6 +40,8 @@ nav {
     justify-content: space-between;
     align-items: center;
     z-index: 1001;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .logo {
@@ -290,14 +293,20 @@ h2 {
     nav {
         padding: 0.75rem;
         text-align: center;
+        position: fixed !important;
+        transform: translateZ(0);
+        will-change: transform;
     }
     
     nav ul {
         gap: 0.75rem;
+        padding: 0 10px;
     }
 
-    nav .logo {
-        font-size: 1.2rem;
+    nav a {
+        display: inline-block;
+        padding: 5px;
+        font-size: 0.9rem;
     }
     
     .slide {
@@ -578,45 +587,24 @@ html {
 }
 
 @supports (-webkit-touch-callout: none) {
-    /* iOS-specific styles */
-    #bg-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 1;
-        pointer-events: none;
-        transform: none !important;
-        -webkit-transform: translateZ(0);  /* Force GPU acceleration */
-        backface-visibility: hidden;
-        perspective: 1000;
-    }
-    
-    /* Remove the problematic fixed positioning */
-    html, body {
-        width: 100%;
-        height: 100%;
-        -webkit-overflow-scrolling: touch;
-        overflow-x: hidden;
-    }
-    
-    /* Ensure content is scrollable */
-    body {
-        position: relative;
-        min-height: 100%;
-        -webkit-transform: translateZ(0);  /* Force GPU acceleration */
-    }
-    
-    /* Fix nav positioning for iOS */
+    /* Update iOS-specific nav styles */
     nav {
-        position: fixed;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
         -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
     
-    /* Force hardware acceleration for all transforms */
-    * {
-        -webkit-transform-style: preserve-3d;
-        -webkit-backface-visibility: hidden;
+    /* Remove the transform from body that might interfere */
+    body {
+        -webkit-transform: none;
+        transform: none;
+    }
+    
+    /* Ensure content starts below nav */
+    section:first-of-type {
+        margin-top: 60px;
     }
 } 
