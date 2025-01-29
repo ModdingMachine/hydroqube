@@ -345,7 +345,7 @@ function handleResize() {
                 // Simpler positioning for mobile
                 const screenWidth = window.innerWidth;
                 const rightOffset = screenWidth; 
-                cube.mesh.position.x = rightOffset / 40 + 1.5; // Increased divisor from 15
+                cube.mesh.position.x = rightOffset / 40 + 1.5;
                 cube.mesh.position.z = 0.5;
                 
                 // Reset rotation speeds first to prevent compounding
