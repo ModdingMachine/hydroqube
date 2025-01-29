@@ -5,11 +5,16 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({ 
     canvas, 
     alpha: true, 
-    antialias: true 
+    antialias: true,
+    powerPreference: "high-performance",
+    failIfMajorPerformanceCaveat: false
 });
 
+// Add pixel ratio handling for iOS
+const pixelRatio = Math.min(window.devicePixelRatio, 2);
+renderer.setPixelRatio(pixelRatio);
+
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor(0x006994, 0);
 
 // Lighting
@@ -306,6 +311,12 @@ const cubes = [
 
 // Animation loop
 function animate() {
+    if (resizeRendererToDisplaySize()) {
+        const canvas = renderer.domElement;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+    }
+    
     cubes.forEach(cube => cube.update());
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
@@ -313,12 +324,13 @@ function animate() {
 
 // Handle window resize
 window.addEventListener('resize', () => {
-    // Only update camera and renderer if not on mobile
-    if (window.innerWidth > 768) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    
+    renderer.setSize(width, height, false);
     handleResize();
 });
 
@@ -455,4 +467,15 @@ function handleResize() {
 }
 
 // Initial call to handle resize
-handleResize(); 
+handleResize();
+
+// Ensure proper sizing on iOS
+function resizeRendererToDisplaySize() {
+    const width = canvas.clientWidth * pixelRatio | 0;
+    const height = canvas.clientHeight * pixelRatio | 0;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+        renderer.setSize(width, height, false);
+    }
+    return needResize;
+} 
