@@ -23,6 +23,9 @@ renderer.setPixelRatio(pixelRatio);
 
 // Ensure proper sizing on iOS
 function resizeRendererToDisplaySize() {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) return false; // Don't resize on mobile
+    
     const width = canvas.clientWidth * pixelRatio | 0;
     const height = canvas.clientHeight * pixelRatio | 0;
     const needResize = canvas.width !== width || canvas.height !== height;
@@ -345,7 +348,7 @@ function handleResize() {
                 // Simpler positioning for mobile
                 const screenWidth = window.innerWidth;
                 const rightOffset = screenWidth; 
-                cube.mesh.position.x = rightOffset / 40 + 1.5;
+                cube.mesh.position.x = rightOffset / 40;
                 cube.mesh.position.z = 0.5;
                 
                 // Reset rotation speeds first to prevent compounding
@@ -382,7 +385,8 @@ handleResize();
 
 // Animation loop
 function animate() {
-    if (resizeRendererToDisplaySize()) {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile && resizeRendererToDisplaySize()) {
         const canvas = renderer.domElement;
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
@@ -395,13 +399,16 @@ function animate() {
 
 // Handle window resize
 window.addEventListener('resize', () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    
-    renderer.setSize(width, height, false);
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize(width, height, false);
+    }
     handleResize();
 });
 
