@@ -348,12 +348,12 @@ function handleResize() {
                 // Simpler positioning for mobile
                 const screenWidth = window.innerWidth;
                 const rightOffset = screenWidth; 
-                cube.mesh.position.x = rightOffset / 40;
+                cube.mesh.position.x = rightOffset / 40 -3.5;
                 cube.mesh.position.z = 0.5;
                 
                 // Reset rotation speeds first to prevent compounding
                 cube.rotationSpeed.copy(cube.baseRotationSpeed);
-                cube.initialRotationSpeed.copy(cube.rotationSpeed).multiplyScalar(4);
+                cube.initialRotationSpeed.copy(cube.rotationSpeed).multiplyScalar(8);
                 cube.currentRotationSpeed.copy(cube.initialRotationSpeed);
             }
         } else {
@@ -377,8 +377,8 @@ cubes = [
     new Cube('left', -0.1, 0, 3, 'outer'),
     new Cube('left', -1.5, -1, 3, 'outer'),
     new Cube('left', -0.75, 5, 2.3, 'outer'),
-    new Cube('right', 0, -1, 3.2, 'middle'),
-    new Cube('right', 1.4, 3, 2.5, 'outer')
+    new Cube('right', 0, -1, 2.9, 'middle'),
+    new Cube('right', 1.4, 3, 3.3, 'outer')
 ];
 
 handleResize();
