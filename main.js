@@ -1,21 +1,51 @@
 // Three.js setup
 const canvas = document.querySelector('#bg-canvas');
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ 
-    canvas, 
-    alpha: true, 
-    antialias: true,
-    powerPreference: "high-performance",
-    failIfMajorPerformanceCaveat: false
-});
+
+// Add error handling for WebGL context
+let renderer;
+try {
+    renderer = new THREE.WebGLRenderer({ 
+        canvas, 
+        alpha: true, 
+        antialias: false,  // Disable antialiasing for better mobile performance
+        powerPreference: "high-performance",
+        failIfMajorPerformanceCaveat: false
+    });
+    
+    // Force context preservation
+    renderer.context.getExtension('WEBGL_lose_context');
+} catch (error) {
+    console.error('WebGL error:', error);
+}
 
 // Add pixel ratio handling for iOS
 const pixelRatio = Math.min(window.devicePixelRatio, 2);
 renderer.setPixelRatio(pixelRatio);
 
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x006994, 0);
+// Add context lost/restore handlers
+canvas.addEventListener('webglcontextlost', (event) => {
+    event.preventDefault();
+    console.log('Context lost');
+}, false);
+
+canvas.addEventListener('webglcontextrestored', () => {
+    console.log('Context restored');
+    initRenderer();  // Re-initialize everything
+}, false);
+
+function initRenderer() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x006994, 0);
+    
+    // Force a resize check
+    resizeRendererToDisplaySize();
+    handleResize();
+}
+
+initRenderer();
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -36,13 +66,10 @@ const secondaryLight = new THREE.DirectionalLight(0xffffff, 0.4);
 secondaryLight.position.set(0, -10, 25);
 scene.add(secondaryLight);
 
-
-
 camera.position.z = 30;
 camera.position.y = 0;
 
 var scalar = 1; //keep direction of rotation with scrolling
-
 
 // Add Splash particle class
 class SplashParticle {
@@ -98,8 +125,6 @@ class SplashParticle {
         scene.remove(this.mesh);
     }
 }
-
-
 
 class Cube {
     constructor(side, index, yOffset, scale, position = 'outer') {
@@ -213,7 +238,6 @@ class Cube {
         this.bubbles.push(bubble);
         this.bubbleSystem.add(bubble);
     }
-
 
     //ANIMATION
     update() {
