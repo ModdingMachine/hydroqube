@@ -432,21 +432,16 @@ function handleResize() {
                 cube.bubbleSystem.visible = cube.position === 'middle';
             }
             
-            if (cube.position === 'middle') {
-                // Position cube in the right space
-                const contentWidth = window.innerWidth * 0.7;
-                const margin = window.innerWidth * 0.45;
-                const rightSpace = window.innerWidth - contentWidth - margin;
+            //if (cube.position === 'middle') {
+            //    // Position cube in the right space
+            //    const contentWidth = window.innerWidth * 0.7;
+            //    const margin = window.innerWidth * 0.45;
+            //    const rightSpace = window.innerWidth - contentWidth - margin;
                 
-                // Convert to Three.js units
-                cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
-                cube.mesh.position.z = 0.5;
-                
-                // Double the rotation speed for mobile
-                cube.rotationSpeed.multiplyScalar(2);
-                cube.initialRotationSpeed.multiplyScalar(2);
-                cube.currentRotationSpeed.multiplyScalar(2);
-            }
+            //    // Convert to Three.js units
+            //    cube.mesh.position.x = (contentWidth / 20) + (rightSpace / 40);
+            //    cube.mesh.position.z = 0.5;
+            //}
         } else {
             // Reset position and show all cubes on desktop
             cube.mesh.visible = true;
@@ -454,14 +449,14 @@ function handleResize() {
                 cube.bubbleSystem.visible = true;
             }
             // Reset position and rotation if it was moved for mobile
-            if (cube.position === 'middle') {
-                cube.mesh.position.x = 30;
-                cube.mesh.position.z = 0;
-                // Reset rotation speeds to original values
-                cube.rotationSpeed.divideScalar(2);
-                cube.initialRotationSpeed.divideScalar(2);
-                cube.currentRotationSpeed.divideScalar(2);
-            }
+            //if (cube.position === 'middle') {
+            //    cube.mesh.position.x = 30;
+            //    cube.mesh.position.z = 0;
+            //    // Reset rotation speeds to original values
+            //    cube.rotationSpeed.divideScalar(2);
+            //    cube.initialRotationSpeed.divideScalar(2);
+            //    cube.currentRotationSpeed.divideScalar(2);
+            //}
         }
     });
 }
